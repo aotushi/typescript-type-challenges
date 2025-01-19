@@ -105,16 +105,6 @@ type Length<T extends readonly any[]> = T['length']
 type Length<T extends readonly any[]> = { [K in keyof T]: any}['length']
 ```
 
-```ts twoslash
-// 实现4
-type Length<T extends readonly any[]> = any
-```
-
-```ts twoslash
-type Length<T extends readonly any[], Acc extends 0> = T['length'] extends Acc ? Acc : Length<T, Acc + 1>
-// 不能对类型进行算术运算
-```
-
 </details>
 
 <span className="badge-links">
