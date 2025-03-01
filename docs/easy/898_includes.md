@@ -74,7 +74,7 @@ type Includes<T extends readonly any[], U> = any;
   </a>
 </span>
 
-## my solution
+## 解决方案
 
 <details>
 
