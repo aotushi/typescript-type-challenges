@@ -1,14 +1,14 @@
 ---
-sidebar_label: 'If'
-sidebar_position: 268
-title: '使用typescript实现简单的If类型'
+sidebar_label: 'Concat'
+sidebar_position: 533
+title: '使用typescript实现concat'
 ---
 
-# If
+# Concat
 
 ## 介绍
 
-export const questionNumber = '268';
+export const questionNumber = '533';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -22,20 +22,24 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 type cases = [
-  Expect<Equal<If<true, 'a', 'b'>, 'a'>>,
-  Expect<Equal<If<false, 'a', 2>, 2>>
+  Expect<Equal<Concat<[], []>, []>>,
+  Expect<Equal<Concat<[], [1]>, [1]>>,
+  Expect<Equal<Concat<[1, 2], [3, 4]>, [1, 2, 3, 4]>>,
+  Expect<
+    Equal<
+      Concat<['1', 2, '3'], [false, boolean, '4']>,
+      ['1', 2, '3', false, boolean, '4']
+    >
+  >
 ];
 // - case
 ```
 
-实现一个 `IF` 类型，它接收一个条件类型 `C` ，一个判断为真时的返回类型 `T` ，以及一个判断为假时的返回类型 `F`。 `C` 只能是 `true` 或者 `false`， `T` 和 `F` 可以是任意类型。
-
-
-例子:
+在类型系统里实现 JavaScript 内置的 `Array.concat` 方法，这个类型接受两个参数，返回的新数组类型应该按照输入参数从左到右的顺序合并为一个新的数组。
+例如
 
 ```ts
-type A = If<true, 'a', 'b'>; // expected to be 'a'
-type B = If<false, 'a', 'b'>; // expected to be 'b'
+type Result = Concat<[1], [2]>; // expected to be [1, 2]
 ```
 
 <span className="badge-links">
@@ -50,11 +54,21 @@ type B = If<false, 'a', 'b'>; // expected to be 'b'
 // @include: helper
 // ---cut---
 /* _____________ Your Code Here _____________ */
-type If<C, T, F> = any;
+type Concat<T, U> = any;
 
 // @errors: 2344
 // @include: test
 ```
+
+<span className="badge-links">
+  <a
+    className="challenge"
+    target="\_blank"
+    href={`https://tsch.js.org/${questionNumber}/play`}
+  >
+    take the challenge
+  </a>
+</span>
 
 <span className="badge-links">
   <a
@@ -79,13 +93,14 @@ type If<C, T, F> = any;
 
 /* _____________ Answer Here _____________ */
 /// ---cut---
-type If<C extends boolean, T, F> = C extends true ? T : F
-```
 
-```ts twoslash
-type If<C,T,F> = C extends true ? T : C extends false ? F : never
+type Concat<T extends readonly unknown[],U extends readonly unknown[]> = [...T, ...U] 
+// 注意事项:
+/**
+ * 1. unknown[] 与 any[]的区别
+ * 2. 只读数组和数组的区别
+ */
 ```
-
 
 </details>
 
@@ -105,4 +120,3 @@ type If<C,T,F> = C extends true ? T : C extends false ? F : never
     view more solutions
   </a>
 </span>
-
