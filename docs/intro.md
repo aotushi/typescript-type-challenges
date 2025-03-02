@@ -3,6 +3,10 @@ sidebar_position: 1
 slug: /
 ---
 
+# new 
+
+此项目是[typescript-type-challenges-list](https://github.com/keidarcy/typescript-type-challenges-list)的中文版本, 改动范围包括: 内容, 网站配置, 及新增了一些正确或者错误的解决方案.
+
 # Intro
 
 What is Type Challenges? **Type Challenges** is a collection of typescript type system puzzles.
