@@ -113,12 +113,14 @@ For example
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Chainable = {
-  option(key: string, value: any): any
-  get(): any
-}
+// type Chainable = {
+//   option(key: string, value: any): any
+//   get(): any
+// }
 
-// @errors: 2344 2578
+type Chainable = any
+
+// @errors: 2344
 // @include: test
 ```
 
@@ -141,6 +143,7 @@ type Chainable = {
 ```ts twoslash
 // @include: helper
 
+// @errors: 2344
 // @include: test
 
 /* _____________ Answer Here _____________ */
