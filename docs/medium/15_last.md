@@ -1,6 +1,6 @@
 ---
 sidebar_label: Last
-sidebar_position: 14
+sidebar_position: 15
 tags: [array]
 title: '使用typescript返回数组最后一个元素的类型'
 ---
@@ -9,7 +9,7 @@ title: '使用typescript返回数组最后一个元素的类型'
 
 ## 介绍
 
-export const questionNumber = '14';
+export const questionNumber = '15';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
