@@ -1,6 +1,6 @@
 ---
 sidebar_label: Permutation
-sidebar_position: 191
+sidebar_position: 296
 tags: []
 title: '使用typescript实现联合类型的全排列Permutation'
 ---

@@ -1,15 +1,15 @@
 ---
-sidebar_label: AppendArgument
-sidebar_position: 191
+sidebar_label: StringLength
+sidebar_position: 298
 tags: []
-title: '使用typescript实现一个函数参数的appendArgument'
+title: '使用typescript实现联合类型的全排列Permutation'
 ---
 
-# AppendArgument
+# Permutation
 
 ## 介绍
 
-export const questionNumber = '191';
+export const questionNumber = '298';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -26,33 +26,20 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
-type Case1 = AppendArgument<(a: number, b: string) => number, boolean>
-type Result1 = (a: number, b: string, x: boolean) => number
-
-type Case2 = AppendArgument<() => void, undefined>
-type Result2 = (x: undefined) => void
-
 
 
 type cases = [
-  Expect<Equal<Case1, Result1>>,
-  Expect<Equal<Case2, Result2>>,
-  // @ts-expect-error
-  AppendArgument<unknown, undefined>,
+  Expect<Equal<LengthOfString<''>, 0>>,
+  Expect<Equal<LengthOfString<'kumiko'>, 6>>,
+  Expect<Equal<LengthOfString<'reina'>, 5>>,
+  Expect<Equal<LengthOfString<'Sound! Euphonium'>, 16>>,
 ]
 
 // - case
 ```
-  实现一个泛型 `AppendArgument<Fn, A>`，对于给定的函数类型 `Fn`，以及一个任意类型 `A`，返回一个新的函数 `G`。`G` 拥有 `Fn` 的所有参数并在末尾追加类型为 `A` 的参数。
 
-例如
+计算字符串的长度，类似于 `String#length` 
 
-```ts
-  type Fn = (a: number, b: string) => number
-
-  type Result = AppendArgument<Fn, boolean>
-  // 期望是 (a: number, b: string, x: boolean) => number
-```
 
 <span className="badge-links">
   <a className="view" target="\_blank" href={`https://tsch.js.org/${questionNumber}`}>
@@ -67,9 +54,9 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type AppendArgument<Fn, A> = any
+type LengthOfString<S extends string> = any
 
-// @errors: 2344 2578
+// @errors: 2344 2558
 // @include: test
 ```
 
@@ -93,12 +80,31 @@ type AppendArgument<Fn, A> = any
 // @include: helper
 
 // @include: test
-// @errors: 2578
-
+// @errors: 2344 2300
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R ? (...args: [...Args, A]) => R : never;
+// 方法1
+// 这里思考以下, 为什么字符串的length属性返回类型是个number, 而不是和数组一样的数值字面量类型呢
+type StrToArr<S extends string , T extends any[]> = S extends ''
+  ? []
+  : S extends `${infer F}${infer R}`
+    ? [...T, F, ...StrToArr<R, T>]
+    : T;
+type LengthOfString<S extends string> = StrToArr<S, []>['length'];
+
+```
+
+```ts twoslash
+// most popular
+
+type LengthOfString<
+  S extends string,
+  T extends string[] = []
+> = S extends `${infer F}${infer R}`
+  ? LengthOfString<R, [...T, F]>
+  : T['length'];
+
 
 ```
 
