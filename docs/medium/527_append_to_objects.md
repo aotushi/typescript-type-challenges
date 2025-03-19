@@ -1,15 +1,15 @@
 ---
-sidebar_label: StringLength
-sidebar_position: 298
+sidebar_label: Flatten
+sidebar_position: 528
 tags: []
-title: '使用typescript实现联合类型的全排列Permutation'
+title: '使用typescript实现为接口添加一个新字段的类型'
 ---
 
-# Permutation
+# Append to object
 
 ## 介绍
 
-export const questionNumber = '298';
+export const questionNumber = '528';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -26,19 +26,59 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
+type test1 = {
+  key: 'cat'
+  value: 'green'
+}
+
+type testExpect1 = {
+  key: 'cat'
+  value: 'green'
+  home: boolean
+}
+
+type test2 = {
+  key: 'dog' | undefined
+  value: 'white'
+  sun: true
+}
+
+type testExpect2 = {
+  key: 'dog' | undefined
+  value: 'white'
+  sun: true
+  home: 1
+}
+
+type test3 = {
+  key: 'cow'
+  value: 'yellow'
+  sun: false
+}
+
+type testExpect3 = {
+  key: 'cow'
+  value: 'yellow'
+  sun: false
+  moon: false | undefined
+}
 
 
 type cases = [
-  Expect<Equal<LengthOfString<''>, 0>>,
-  Expect<Equal<LengthOfString<'kumiko'>, 6>>,
-  Expect<Equal<LengthOfString<'reina'>, 5>>,
-  Expect<Equal<LengthOfString<'Sound! Euphonium'>, 16>>,
+  Expect<Equal<AppendToObject<test1, 'home', boolean>, testExpect1>>,
+  Expect<Equal<AppendToObject<test2, 'home', 1>, testExpect2>>,
+  Expect<Equal<AppendToObject<test3, 'moon', false | undefined>, testExpect3>>,
 ]
 
 // - case
 ```
 
-计算字符串的长度，类似于 `String#length` 
+实现一个为接口添加一个新字段的类型。该类型接收三个参数，返回带有新字段的接口类型。
+
+```ts
+  type Test = { id: '1' }
+  type Result = AppendToObject<Test, 'value', 4> // expected to be { id: '1', value: 4 }
+```
 
 
 <span className="badge-links">
@@ -54,9 +94,9 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type LengthOfString<S extends string> = any
+type AppendToObject<T, U, V> = any
 
-// @errors: 2344 2558
+// @errors: 2344 2315
 // @include: test
 ```
 
@@ -84,31 +124,22 @@ type LengthOfString<S extends string> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-// 方法1
-// 这里思考以下, 为什么字符串的length属性返回类型是个number, 而不是和数组一样的数值字面量类型呢
-// 第二个是, T 为什么不能直接赋值位空数组. TypeScript 在处理泛型参数时，会先检查类型约束（extends），然后才考虑默认值。
-type StrToArr<S extends string , T extends any[]> = S extends ''
-  ? []
-  : S extends `${infer F}${infer R}`
-    ? [...T, F, ...StrToArr<R, T>]
-    : T;
-type LengthOfString<S extends string> = StrToArr<S, []>['length'];
+type AppendToObject<T, U extends string, V> = T extends {[index: string]: any}
+  ? {[K in keyof T|U]: K extends keyof T ? T[K] : V}
+  : T;
+
 
 ```
+
 
 ```ts twoslash
 // most popular
 
-type LengthOfString<
-  S extends string,
-  T extends string[] = []
-> = S extends `${infer F}${infer R}`
-  ? LengthOfString<R, [...T, F]>
-  : T['length'];
-
+type AppendToObject<T, U extends keyof any, V> = {
+  [K in keyof T | U]: K extends keyof T ? T[K] : V;
+};
 
 ```
-
 
 </details>
 
