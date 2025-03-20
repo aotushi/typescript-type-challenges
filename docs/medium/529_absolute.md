@@ -1,15 +1,15 @@
 ---
-sidebar_label: AppendToObject
-sidebar_position: 528
+sidebar_label: Absolute
+sidebar_position: 529
 tags: []
-title: '使用typescript实现为接口添加一个新字段的类型'
+title: '使用typescript实现为绝对值返回的类型'
 ---
 
-# Append to object
+# Absolute
 
 ## 介绍
 
-export const questionNumber = '528';
+export const questionNumber = '529';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -26,58 +26,27 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
-type test1 = {
-  key: 'cat'
-  value: 'green'
-}
-
-type testExpect1 = {
-  key: 'cat'
-  value: 'green'
-  home: boolean
-}
-
-type test2 = {
-  key: 'dog' | undefined
-  value: 'white'
-  sun: true
-}
-
-type testExpect2 = {
-  key: 'dog' | undefined
-  value: 'white'
-  sun: true
-  home: 1
-}
-
-type test3 = {
-  key: 'cow'
-  value: 'yellow'
-  sun: false
-}
-
-type testExpect3 = {
-  key: 'cow'
-  value: 'yellow'
-  sun: false
-  moon: false | undefined
-}
-
-
 type cases = [
-  Expect<Equal<AppendToObject<test1, 'home', boolean>, testExpect1>>,
-  Expect<Equal<AppendToObject<test2, 'home', 1>, testExpect2>>,
-  Expect<Equal<AppendToObject<test3, 'moon', false | undefined>, testExpect3>>,
+  Expect<Equal<Absolute<0>, '0'>>,
+  Expect<Equal<Absolute<-0>, '0'>>,
+  Expect<Equal<Absolute<10>, '10'>>,
+  Expect<Equal<Absolute<-5>, '5'>>,
+  Expect<Equal<Absolute<'0'>, '0'>>,
+  Expect<Equal<Absolute<'-0'>, '0'>>,
+  Expect<Equal<Absolute<'10'>, '10'>>,
+  Expect<Equal<Absolute<'-5'>, '5'>>,
+  Expect<Equal<Absolute<-1_000_000n>, '1000000'>>,
+  Expect<Equal<Absolute<9_999n>, '9999'>>,
 ]
 
 // - case
 ```
 
-实现一个为接口添加一个新字段的类型。该类型接收三个参数，返回带有新字段的接口类型。
+实现一个接收string,number或bigInt类型参数的`Absolute`类型,返回一个正数字符串。
 
 ```ts
-  type Test = { id: '1' }
-  type Result = AppendToObject<Test, 'value', 4> // expected to be { id: '1', value: 4 }
+  type Test = -100;
+  type Result = Absolute<Test>; // expected to be "100"
 ```
 
 
@@ -94,7 +63,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type AppendToObject<T, U, V> = any
+type Absolute<T extends number | string | bigint> = any
 
 // @errors: 2344 2315
 // @include: test
@@ -124,21 +93,24 @@ type AppendToObject<T, U, V> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type AppendToObject<T, U extends string, V> = T extends {[index: string]: any}
-  ? {[K in keyof T|U]: K extends keyof T ? T[K] : V}
-  : T;
+// most popular
 
-
+type Absolute<T extends number | string | bigint> = `${T}` extends `-${infer U}` ? U : `${T}`
 ```
 
 
 ```ts twoslash
-// most popular
+// 没啥用
 
-type AppendToObject<T, U extends keyof any, V> = {
-  [K in keyof T | U]: K extends keyof T ? T[K] : V;
-};
-
+type Absolute<T extends number | string | bigint> =   T extends number 
+    ? `${T}` extends `-${infer Tn}` ? `${Tn}` : `${T}`
+    : T extends string
+      ? `${T}` extends `-${infer Ts}` ? `${Ts}` : `${T}`
+      : T extends bigint
+        ? `${T}` extends `-${infer Tb}`
+          ? `${Tb}`
+          : `${T}`
+        : never
 ```
 
 </details>

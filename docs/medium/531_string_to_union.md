@@ -1,15 +1,15 @@
 ---
-sidebar_label: AppendToObject
-sidebar_position: 528
+sidebar_label: String to Union
+sidebar_position: 531
 tags: []
-title: '使用typescript实现为接口添加一个新字段的类型'
+title: '使用typescript实现字符串转联合类型'
 ---
 
-# Append to object
+# String to Union
 
 ## 介绍
 
-export const questionNumber = '528';
+export const questionNumber = '531';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -26,58 +26,21 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
-type test1 = {
-  key: 'cat'
-  value: 'green'
-}
-
-type testExpect1 = {
-  key: 'cat'
-  value: 'green'
-  home: boolean
-}
-
-type test2 = {
-  key: 'dog' | undefined
-  value: 'white'
-  sun: true
-}
-
-type testExpect2 = {
-  key: 'dog' | undefined
-  value: 'white'
-  sun: true
-  home: 1
-}
-
-type test3 = {
-  key: 'cow'
-  value: 'yellow'
-  sun: false
-}
-
-type testExpect3 = {
-  key: 'cow'
-  value: 'yellow'
-  sun: false
-  moon: false | undefined
-}
-
-
 type cases = [
-  Expect<Equal<AppendToObject<test1, 'home', boolean>, testExpect1>>,
-  Expect<Equal<AppendToObject<test2, 'home', 1>, testExpect2>>,
-  Expect<Equal<AppendToObject<test3, 'moon', false | undefined>, testExpect3>>,
+  Expect<Equal<StringToUnion<''>, never>>,
+  Expect<Equal<StringToUnion<'t'>, 't'>>,
+  Expect<Equal<StringToUnion<'hello'>, 'h' | 'e' | 'l' | 'l' | 'o'>>,
+  Expect<Equal<StringToUnion<'coronavirus'>, 'c' | 'o' | 'r' | 'o' | 'n' | 'a' | 'v' | 'i' | 'r' | 'u' | 's'>>,
 ]
 
 // - case
 ```
 
-实现一个为接口添加一个新字段的类型。该类型接收三个参数，返回带有新字段的接口类型。
+实现一个将接收到的String参数转换为一个字母Union的类型。
 
 ```ts
-  type Test = { id: '1' }
-  type Result = AppendToObject<Test, 'value', 4> // expected to be { id: '1', value: 4 }
+  type Test = '123';
+  type Result = StringToUnion<Test>; // expected to be "1" | "2" | "3"
 ```
 
 
@@ -94,7 +57,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type AppendToObject<T, U, V> = any
+type StringToUnion<T extends string> = any
 
 // @errors: 2344 2315
 // @include: test
@@ -124,22 +87,12 @@ type AppendToObject<T, U, V> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type AppendToObject<T, U extends string, V> = T extends {[index: string]: any}
-  ? {[K in keyof T|U]: K extends keyof T ? T[K] : V}
-  : T;
-
-
-```
-
-
-```ts twoslash
-// most popular
-
-type AppendToObject<T, U extends keyof any, V> = {
-  [K in keyof T | U]: K extends keyof T ? T[K] : V;
-};
+type StringToUnion<T extends string> = T extends `${infer F}${infer Rest}` 
+  ? F | StringToUnion<Rest> 
+  : never
 
 ```
+
 
 </details>
 
