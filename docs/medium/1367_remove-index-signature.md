@@ -1,15 +1,15 @@
 ---
-sidebar_label: IsUnion
-sidebar_position: 1097
+sidebar_label: RemoveIndexSignature
+sidebar_position: 1367
 tags: []
-title: '使用typescript实现IsUnion'
+title: '使用typescript实现RemoveIndexSignature'
 ---
 
-# IsUnion
+# RemoveIndexSignature
 
 ## 介绍
 
-export const questionNumber = '1097';
+export const questionNumber = '1367';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -26,34 +26,49 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
+type Foo = {
+  [key: string]: any
+  foo(): void
+}
+
+type Bar = {
+  [key: number]: any
+  bar(): void
+  0: string
+}
+
+const foobar = Symbol('foobar')
+type FooBar = {
+  [key: symbol]: any
+  [foobar](): void
+}
+
+type Baz = {
+  bar(): void
+  baz: string
+}
 
 type cases = [
-  Expect<Equal<IsUnion<string>, false>>,
-  Expect<Equal<IsUnion<string | number>, true>>,
-  Expect<Equal<IsUnion<'a' | 'b' | 'c' | 'd'>, true>>,
-  Expect<Equal<IsUnion<undefined | null | void | ''>, true>>,
-  Expect<Equal<IsUnion<{ a: string } | { a: number }>, true>>,
-  Expect<Equal<IsUnion<{ a: string | number }>, false>>,
-  Expect<Equal<IsUnion<[string | number]>, false>>,
-  // Cases where T resolves to a non-union type.
-  Expect<Equal<IsUnion<string | never>, false>>,
-  Expect<Equal<IsUnion<string | unknown>, false>>,
-  Expect<Equal<IsUnion<string | any>, false>>,
-  Expect<Equal<IsUnion<string | 'a'>, false>>,
-  Expect<Equal<IsUnion<never>, false>>,
+  Expect<Equal<RemoveIndexSignature<Foo>, { foo(): void }>>,
+  Expect<Equal<RemoveIndexSignature<Bar>, { bar(): void, 0: string }>>,
+  Expect<Equal<RemoveIndexSignature<FooBar>, { [foobar](): void }>>,
+  Expect<Equal<RemoveIndexSignature<Baz>, { bar(): void, baz: string }>>,
 ]
 
 // - case
 ```
 
-实现一个类型IsUnion, 接收一个类型T, 如果解析为联合类型则返回true, 否则返回false
+实现`RemoveIndexSignature<T>`, 从对象类型中排除索引签名
 
   例如：
 
   ```ts
-  type case1 = IsUnion<string> // false
-  type case2 = IsUnion<string | number> // true
-  type case3 = IsUnion<[string | number]> // false
+    type Foo = {
+    [key: string]: any
+    foo(): void
+  }
+
+  type A = RemoveIndexSignature<Foo> // expected { foo(): void }
   ```
 
 
@@ -70,7 +85,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type IsUnion<T> = any
+type RemoveIndexSignature<T> = any
 
 // @errors: 2344 2315
 // @include: test
@@ -100,8 +115,11 @@ type IsUnion<T> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type IsUnion<T> = any
+// most popular
 
+type RemoveIndexSignature<T, P=PropertyKey> = {
+  [K in keyof T as P extends K? never : K extends P ? K : never]: T[K]
+}
 
 ```
 
