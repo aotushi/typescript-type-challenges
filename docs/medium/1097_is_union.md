@@ -105,6 +105,12 @@ type IsUnion<T> = any
 
 ```
 
+```ts twoslash
+// my solution
+type IsUnion<T, U=T> = (T extends U ? U extends T ? false : true : never) extends false ? false : true;
+
+```
+
 
 </details>
 
