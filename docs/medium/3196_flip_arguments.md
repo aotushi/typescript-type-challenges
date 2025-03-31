@@ -55,7 +55,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Reverse<T> = any
+type FlipArguments<T> = any
 
 // @errors: 2344 2314
 // @include: test
