@@ -85,6 +85,7 @@ type FlipArguments<T> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
+// attention: 虽然never可以解构, 例如[...never], 变成一个空数组, 但是如果条件判断表达式中false下返回的是never
 type Reverse<T extends any[]> = T extends [infer F, ...infer Rest]
   ? [...Reverse<Rest>, F]
   : [];
