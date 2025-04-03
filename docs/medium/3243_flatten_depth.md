@@ -1,5 +1,5 @@
 ---
-sidebar_label: FlattenDepth
+sidebar_label: FlattenDepth $$
 sidebar_position: 3243
 tags: []
 title: '使用typescript实现FlattenDepth'
@@ -94,6 +94,7 @@ type FlattenDepth<T> = any
 
 ```ts twoslash
 // my solution
+//@errors: 2589
 
 /**
  * 存在的问题: NumToArr由于19260817存在, 递归次数超过限制,产生ts报错.
