@@ -1,5 +1,5 @@
 ---
-sidebar_label: BEM Style String
+sidebar_label: BEM Style String $
 sidebar_position: 3326
 tags: []
 title: '使用typescript实现BEM Style String'
@@ -56,7 +56,9 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type BEM<B extends string, E extends string[], M extends string[]> = any
+// most popular
+
+type BEM<B extends string, E extends string[],M extends string[]> = `${B}${E extends [] ? '' : `__${E[number]}`}${M extends [] ? '' : `--${M[number]}`}`
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -91,7 +93,35 @@ type BEM<B extends string, E extends string[], M extends string[]> = any
 ```
 
 
+```ts twoslash
+// my solution
+/**
+ * 如果E类型数组中有多个元素,就不能处理.
+ */
+type addModifierLine<Pre extends string, A extends any[]> = A['length'] extends 0
+  ? A
+  : A extends [infer F extends string, ...infer R]
+    ? `${Pre}${F}` | (R['length'] extends 0 ? never : addModifierLine<Pre, R>)
+    : A;
 
+
+type addModifierLineToArrEle<Pre extends string, A extends any[]> = A extends [infer F extends string, ...infer R]
+    ? [`${Pre}${F}`, ...addModifierLineToArrEle<Pre, R>]
+    : [];
+
+type mergeEAndM2<E extends string[], M extends string[]> = 
+  M['length'] extends 0
+    ? E
+    : E extends [infer F extends string]
+      ? addModifierLineToArrEle<F, M>
+      : M;
+
+
+
+type BEM<B extends string, E extends string[], M extends string[]> = 
+  addModifierLine<B, mergeEAndM2<addModifierLineToArrEle<'__', E>, addModifierLineToArrEle<'--', M>>>
+
+```
 
 </details>
 

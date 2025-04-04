@@ -88,7 +88,19 @@ type FlattenDepth<T> = any
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type FlattenDepth<T> = any
+// most popular
+
+type FlattenDepth<
+  T extends any[],
+  S extends number = 1,
+  U extends any[] = []
+> = U['length'] extends S
+  ? T
+  : T extends [infer F, ...infer R]
+  ? F extends any[]
+    ? [...FlattenDepth<F, S, [...U, 1]>, ...FlattenDepth<R, S, U>]
+    : [F, ...FlattenDepth<R, S, U>]
+  : T
 
 ```
 
@@ -97,12 +109,14 @@ type FlattenDepth<T> = any
 //@errors: 2589
 
 /**
- * 存在的问题: NumToArr由于19260817存在, 递归次数超过限制,产生ts报错.
+ * 存在的问题: NumToArr由于19260817存在, 递归次数超过限制,产生ts报错. 所以当时硬编码了50次递归
  */
 
 type NumToArr<N extends number = 1, U extends any[] = []> = N extends U['length']
   ? U
-  : NumToArr<N, [...U, N]>;
+  : U['length'] extends 50
+    ? U
+    : NumToArr<N, [...U, N]>;
 
 type NumMinusOne<T extends any[]> = T['length'] extends 1
   ? 0
