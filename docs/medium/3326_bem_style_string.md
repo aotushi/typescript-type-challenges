@@ -56,9 +56,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-// most popular
-
-type BEM<B extends string, E extends string[],M extends string[]> = `${B}${E extends [] ? '' : `__${E[number]}`}${M extends [] ? '' : `--${M[number]}`}`
+type BEM<B extends string, E extends string[],M extends string[]> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -88,7 +86,8 @@ type BEM<B extends string, E extends string[],M extends string[]> = `${B}${E ext
 /* _____________ Answer Here _____________ */
 /// ---cut---
 
-type BEM<B extends string, E extends string[], M extends string[]> = any
+// most popular
+type BEM<B extends string, E extends string[], M extends string[]> = `${B}${E extends [] ? '' : `__${E[number]}`}${M extends [] ? '' : `--${M[number]}`}`
 
 ```
 
