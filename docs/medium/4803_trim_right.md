@@ -1,15 +1,15 @@
 ---
-sidebar_label: Zip $
-sidebar_position: 4471
+sidebar_label: Trim Right
+sidebar_position: 4803
 tags: []
-title: '使用typescript实现Zip'
+title: '使用typescript实现Trim Right'
 ---
 
-# Zip
+# Trim Right
 
 ## 介绍
 
-export const questionNumber = '4471';
+export const questionNumber = '4803';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -22,24 +22,27 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 
 // - type
 ```
-实现类型`Zip<T, U>`, T和U必须是元组.
+  实现 `TrimRight<T>` ，它接收确定的字符串类型并返回一个新的字符串，其中新返回的字符串删除了原字符串结尾的空白字符串。
 
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
 type cases = [
-  Expect<Equal<Zip<[], []>, []>>,
-  Expect<Equal<Zip<[1, 2], [true, false]>, [[1, true], [2, false]]>>,
-  Expect<Equal<Zip<[1, 2, 3], ['1', '2']>, [[1, '1'], [2, '2']]>>,
-  Expect<Equal<Zip<[], [1, 2, 3]>, []>>,
-  Expect<Equal<Zip<[[1, 2]], [3]>, [[[1, 2], 3]]>>,
+  Expect<Equal<TrimRight<'str'>, 'str'>>,
+  Expect<Equal<TrimRight<'str '>, 'str'>>,
+  Expect<Equal<TrimRight<'str     '>, 'str'>>,
+  Expect<Equal<TrimRight<'     str     '>, '     str'>>,
+  Expect<Equal<TrimRight<'   foo bar  \n\t '>, '   foo bar'>>,
+  Expect<Equal<TrimRight<''>, ''>>,
+  Expect<Equal<TrimRight<'\n\t '>, ''>>,
 ]
 // - case
 ```
   
 
   ```ts
-type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
+type Trimed = TrimRight<'  Hello World  '> // 应推导出 '  Hello World'
+
   ```
 
 
@@ -56,7 +59,7 @@ type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Zip<T, U> = any
+type TrimRight<S extends string> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -82,29 +85,11 @@ type Zip<T, U> = any
 // @include: helper
 
 // @include: test
-// @errors: 2344 2589 2314
+// @errors: 2344 2589 2314 1005
 /* _____________ Answer Here _____________ */
 /// ---cut---
-// most popular
 
-
-type Zip<A extends any[], B extends any[], L extends any[] = []> = L['length'] extends A['length'] | B['length']
-  ? L
-  : Zip<A, B, [...L, [A[L['length']], B[L['length']]]]>
-
-```
-
-
-
-```ts twoslash
-
-// my solution
-
-type Zip<T extends any[], U extends any[], A extends any[] = []> = T extends [infer F, ...infer R]
-  ? U extends [infer F2, ...infer R2]
-    ? Zip<R, R2, [...A, [F, F2]]>
-    : Zip<R, [], [...A]>
-  : A;
+type TrimRight<S extends string> =  S extends `${infer F}${' '|'\n'|'\t'}` ? TrimRight<F> : S;
 
 ```
 

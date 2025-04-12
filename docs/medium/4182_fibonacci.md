@@ -59,7 +59,7 @@ type cases = [
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Flip<T> = any
+type Fibonacci<T extends number> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -91,9 +91,7 @@ type Flip<T> = any
 
 // most popular
 
-type Flip<T extends Record<string ,string|number|boolean>> = {
-  [P in keyof T as `${T[P]}`]: P
-}
+type Fibonacci<T extends number> = any
 
 ```
 

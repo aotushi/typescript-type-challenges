@@ -1,15 +1,15 @@
 ---
-sidebar_label: Zip $
-sidebar_position: 4471
+sidebar_label: Chunk
+sidebar_position: 4499
 tags: []
-title: '使用typescript实现Zip'
+title: '使用typescript实现Chunk'
 ---
 
-# Zip
+# Chunk
 
 ## 介绍
 
-export const questionNumber = '4471';
+export const questionNumber = '4499';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -22,24 +22,28 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 
 // - type
 ```
-实现类型`Zip<T, U>`, T和U必须是元组.
+实现lodash的Chunk方法.
+`Chunk<T, N>`续保两个类型参数, `T`必须是一个元组, `N`必须是一个大于等于1的整数.
 
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
 type cases = [
-  Expect<Equal<Zip<[], []>, []>>,
-  Expect<Equal<Zip<[1, 2], [true, false]>, [[1, true], [2, false]]>>,
-  Expect<Equal<Zip<[1, 2, 3], ['1', '2']>, [[1, '1'], [2, '2']]>>,
-  Expect<Equal<Zip<[], [1, 2, 3]>, []>>,
-  Expect<Equal<Zip<[[1, 2]], [3]>, [[[1, 2], 3]]>>,
+  Expect<Equal<Chunk<[], 1>, []>>,
+  Expect<Equal<Chunk<[1, 2, 3], 1>, [[1], [2], [3]]>>,
+  Expect<Equal<Chunk<[1, 2, 3], 2>, [[1, 2], [3]]>>,
+  Expect<Equal<Chunk<[1, 2, 3, 4], 2>, [[1, 2], [3, 4]]>>,
+  Expect<Equal<Chunk<[1, 2, 3, 4], 5>, [[1, 2, 3, 4]]>>,
+  Expect<Equal<Chunk<[1, true, 2, false], 2>, [[1, true], [2, false]]>>,
 ]
 // - case
 ```
   
 
   ```ts
-type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
+  type exp1 = Chunk<[1, 2, 3], 2> // expected to be [[1, 2], [3]]
+  type exp2 = Chunk<[1, 2, 3], 4> // expected to be [[1, 2, 3]]
+  type exp3 = Chunk<[1, 2, 3], 1> // expected to be [[1], [2], [3]]
   ```
 
 
@@ -56,7 +60,7 @@ type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Zip<T, U> = any
+type Chunk<T> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -82,29 +86,13 @@ type Zip<T, U> = any
 // @include: helper
 
 // @include: test
-// @errors: 2344 2589 2314
+// @errors: 2344 2589 2314 1005
 /* _____________ Answer Here _____________ */
 /// ---cut---
 // most popular
 
 
-type Zip<A extends any[], B extends any[], L extends any[] = []> = L['length'] extends A['length'] | B['length']
-  ? L
-  : Zip<A, B, [...L, [A[L['length']], B[L['length']]]]>
-
-```
-
-
-
-```ts twoslash
-
-// my solution
-
-type Zip<T extends any[], U extends any[], A extends any[] = []> = T extends [infer F, ...infer R]
-  ? U extends [infer F2, ...infer R2]
-    ? Zip<R, R2, [...A, [F, F2]]>
-    : Zip<R, [], [...A]>
-  : A;
+type Chunk<T> = any
 
 ```
 

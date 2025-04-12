@@ -1,15 +1,15 @@
 ---
-sidebar_label: Zip $
-sidebar_position: 4471
+sidebar_label: Trunc
+sidebar_position: 5140
 tags: []
-title: '使用typescript实现Zip'
+title: '使用typescript实现Trunc'
 ---
 
-# Zip
+# Trunc
 
 ## 介绍
 
-export const questionNumber = '4471';
+export const questionNumber = '5140';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -22,24 +22,30 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 
 // - type
 ```
-实现类型`Zip<T, U>`, T和U必须是元组.
+  实现`Math.trunc`, 接收字符串或数值,移除小数位,返回正数值
 
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 
 type cases = [
-  Expect<Equal<Zip<[], []>, []>>,
-  Expect<Equal<Zip<[1, 2], [true, false]>, [[1, true], [2, false]]>>,
-  Expect<Equal<Zip<[1, 2, 3], ['1', '2']>, [[1, '1'], [2, '2']]>>,
-  Expect<Equal<Zip<[], [1, 2, 3]>, []>>,
-  Expect<Equal<Zip<[[1, 2]], [3]>, [[[1, 2], 3]]>>,
+  Expect<Equal<Trunc<0.1>, '0'>>,
+  Expect<Equal<Trunc<0.2>, '0'>>,
+  Expect<Equal<Trunc<1.234>, '1'>>,
+  Expect<Equal<Trunc<12.345>, '12'>>,
+  Expect<Equal<Trunc<-5.1>, '-5'>>,
+  Expect<Equal<Trunc<'.3'>, '0'>>,
+  Expect<Equal<Trunc<'1.234'>, '1'>>,
+  Expect<Equal<Trunc<'-.3'>, '-0'>>,
+  Expect<Equal<Trunc<'-10.234'>, '-10'>>,
+  Expect<Equal<Trunc<10>, '10'>>,
 ]
 // - case
 ```
   
 
   ```ts
-type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
+  type A = Trunc<12.34> // 12
+
   ```
 
 
@@ -56,7 +62,7 @@ type exp = Zip<[1, 2], [true, false]> // expected to be [[1, true], [2, false]]
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type Zip<T, U> = any
+type Trunc<T> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -82,29 +88,15 @@ type Zip<T, U> = any
 // @include: helper
 
 // @include: test
-// @errors: 2344 2589 2314
+// @errors: 2344 2589 2314 1005
 /* _____________ Answer Here _____________ */
 /// ---cut---
-// most popular
 
-
-type Zip<A extends any[], B extends any[], L extends any[] = []> = L['length'] extends A['length'] | B['length']
-  ? L
-  : Zip<A, B, [...L, [A[L['length']], B[L['length']]]]>
-
-```
-
-
-
-```ts twoslash
-
-// my solution
-
-type Zip<T extends any[], U extends any[], A extends any[] = []> = T extends [infer F, ...infer R]
-  ? U extends [infer F2, ...infer R2]
-    ? Zip<R, R2, [...A, [F, F2]]>
-    : Zip<R, [], [...A]>
-  : A;
+type Trunc<T extends number|string> = `${T}` extends `${infer A}.${any}` 
+  ? A extends ''|'-'
+    ? A extends '' ? '0' : '-0'
+    : A
+  : `${T}`
 
 ```
 

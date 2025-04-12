@@ -1,5 +1,5 @@
 ---
-sidebar_label: Greater Than
+sidebar_label: Greater Than $
 sidebar_position: 4425
 tags: []
 title: '使用typescript实现GreaterThan'
