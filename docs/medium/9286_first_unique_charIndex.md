@@ -1,15 +1,15 @@
 ---
-sidebar_label: Checkrepeatedchars
-sidebar_position: 8987
+sidebar_label: FirstUniqueCharIndex
+sidebar_position: 9286
 tags: []
-title: '使用typescript实现checkrepeatedchars'
+title: '使用typescript实现FirstUniqueCharIndex'
 ---
 
-# CheckRepeatedchars
+# FirstUniqueCharIndex
 
 ## 介绍
 
-export const questionNumber = '9142';
+export const questionNumber = '9286';
 
 ```twoslash include helper
 /* _____________ Helper Types _____________ */
@@ -23,15 +23,16 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 // - type
 ```
 
-判断一个string类型中是否有相同的字符
+给一个字符串,找到第一个不重复的字符,并返回它的索引.如果不存在, 返回-1(Inspired by [leetcode 387](https://leetcode.com/problems/first-unique-character-in-a-string/))
 
 ```twoslash include test
 /* _____________ Test Cases _____________ */
 type cases = [
-  Expect<Equal<CheckRepeatedChars<'abc'>, false>>,
-  Expect<Equal<CheckRepeatedChars<'abb'>, true>>,
-  Expect<Equal<CheckRepeatedChars<'cbc'>, true>>,
-  Expect<Equal<CheckRepeatedChars<''>, false>>,
+  Expect<Equal<FirstUniqueCharIndex<'leetcode'>, 0>>,
+  Expect<Equal<FirstUniqueCharIndex<'loveleetcode'>, 2>>,
+  Expect<Equal<FirstUniqueCharIndex<'aabb'>, -1>>,
+  Expect<Equal<FirstUniqueCharIndex<''>, -1>>,
+  Expect<Equal<FirstUniqueCharIndex<'aaa'>, -1>>,
 ]
 
 // - case
@@ -39,7 +40,7 @@ type cases = [
   
 
   ```ts
-type CheckRepeatedChars<T extends string> = any
+type FirstUniqueCharIndex<T extends string> = any
   ```
 
 
@@ -56,7 +57,7 @@ type CheckRepeatedChars<T extends string> = any
 // ---cut---
 /* _____________ Your Code Here _____________ */
 
-type CheckRepeatedChars<T extends string> = any
+type FirstUniqueCharIndex<T extends string> = any
 
 // @errors: 2344 2314 2315
 // @include: test
@@ -88,20 +89,11 @@ type CheckRepeatedChars<T extends string> = any
 
 // most popular
 
-type CheckRepeatedChars<T extends string> = T extends `${infer F}${infer E}` 
-  ? E extends `${string}${F}${string}`
-    ? true
-    : CheckRepeatedChars<E>
-  : false
 
 ```
 
 ```ts twoslash
-// my
-type strToUnion<T extends string> = T extends `${infer F}${infer R}`  ? F | strToUnion<R> : never
 
-
-type CheckRepeatedChars<T extends string> = T extends `${infer F}${infer R}` ? F extends strToUnion<R> ? true : CheckRepeatedChars<R> : false
 
 ```
 
